@@ -7,26 +7,30 @@ import Stopwatch from "@/components/ui/stopwatch";
 import React, { useMemo, useState } from "react";
 import "@/lib/react-big-calendar.css";
 import { ModalCreateEvent } from "@/components/modal-create-event";
-import { useFirestore, useFirestoreCollectionData } from "reactfire";
+import { useAuth, useFirestore, useFirestoreCollectionData } from "reactfire";
 import { collection, query } from "firebase/firestore";
 import { cn } from "@/lib/utils";
 import dynamic from "next/dynamic";
-
-const Loader = dynamic(() => import("@/components/loader"));
+import { toast } from "@/components/ui/use-toast";
+import { useRouter } from "next/navigation";
 
 const localizer = momentLocalizer(moment);
 
 const ColoredDateCellWrapper = ({ children, event, ...rest }: any) => {
-  const hour = Number(moment.utc(event.time).format("HH"));
-  const minute = Number(moment.utc(event.time).format("MM"));
+  const durationSeconds = moment
+    .duration(moment(event.end).diff(event.start))
+    .asMilliseconds();
+  const hour = Number(moment.utc(durationSeconds).format("HH"));
+  const minute = Number(moment.utc(durationSeconds).format("MM"));
+
   return React.cloneElement(React.Children.only(children), {
     children: (
       <div className="rbc-event-content">
         {event.title}{" "}
         <span className="text-[12px]">
-          {!!hour && `(${hour}시)`} {!!minute && `(${minute}분)`}
+          ({Number(hour) ? `${hour}시간` : ""}{" "}
+          {Number(minute) ? `${minute}분` : ""})
         </span>
-        {/* <p className="absolute right-1 top-[50%] -translate-y-1/2">1h</p> */}
       </div>
     ),
   });
@@ -80,6 +84,18 @@ export default function Home() {
     [schedules]
   );
 
+  const auth = useAuth();
+  const router = useRouter();
+  const onStartStopwatch = () => {
+    if (!auth.currentUser) {
+      toast({ title: "로그인이 필요합니다." });
+      router.push("/login");
+      return false;
+    }
+
+    return true;
+  };
+
   return (
     <>
       <ModalCreateEvent
@@ -88,15 +104,14 @@ export default function Home() {
         time={time}
       />
       <div className="flex flex-col items-center gap-8 -mt-10">
-        <Stopwatch onSave={onSaveTime} className="mb-auto" />
+        <Stopwatch
+          onStart={onStartStopwatch}
+          onSave={onSaveTime}
+          className="mb-auto"
+        />
 
         <section className="relative container h-[600px]">
-          {status === "loading" && (
-            <Loader className="absolute left-[50%] top-[42%] -translate-1/2 z-10" />
-          )}
-          <div
-            className={cn("h-full", status === "loading" ? "blur-[1px]" : "")}
-          >
+          <div className={cn("h-full")}>
             <Calendar
               components={components}
               defaultDate={defaultDate}

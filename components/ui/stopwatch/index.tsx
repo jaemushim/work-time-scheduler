@@ -2,11 +2,13 @@ import React, { Component } from "react";
 import "./style.css";
 import { Check, Pause, Play, Repeat } from "lucide-react";
 import { Button } from "../button";
+import { useAuth } from "reactfire";
 
 interface StopwatchState {
   timerOn: boolean;
   timerStart: number;
   timerTime: number;
+  onStart?: () => void;
 }
 
 class Stopwatch extends Component<any, StopwatchState> {
@@ -22,6 +24,9 @@ class Stopwatch extends Component<any, StopwatchState> {
   }
 
   startTimer = () => {
+    const shouldStop = !this.props.onStart(this.state.onStart);
+    if (shouldStop) return;
+
     this.setState({
       timerOn: true,
       timerTime: this.state.timerTime,

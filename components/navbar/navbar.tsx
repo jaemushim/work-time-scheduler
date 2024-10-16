@@ -11,7 +11,10 @@ export const NavBar: FC = () => {
       <div className="animate-in fade-in w-full">
         <nav className="container py-4">
           <div className="flex items-center">
-            <Link href="/" className="hover:opacity-80 transition-opacity">
+            <Link
+              href="/"
+              className="relative z-10 hover:opacity-80 transition-opacity"
+            >
               <div className="flex items-center">
                 <CalendarCheck2Icon className="w-8 h-8 mr-2 inline" />
                 <span className="text-xl font-medium tracking-tighter text-slate-800 mr-6">

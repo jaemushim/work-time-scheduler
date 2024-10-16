@@ -214,6 +214,9 @@ button.rbc-input::-moz-focus-inner {
   display: inline-block;
   white-space: nowrap;
 }
+.rbc-toolbar .rbc-btn-group:first-child {
+  margin-right: 58px;
+}
 .rbc-btn-group > button:first-child:not(:last-child) {
   border-top-right-radius: 0;
   border-bottom-right-radius: 0;

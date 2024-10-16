@@ -12,7 +12,7 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import moment from "moment";
 import { addDoc, collection, doc, setDoc } from "firebase/firestore";
-import { useFirestore } from "reactfire";
+import { useAuth, useFirestore } from "reactfire";
 
 interface ModalCreateEventProps {
   isOpen: boolean;
@@ -25,12 +25,21 @@ export const ModalCreateEvent: FC<ModalCreateEventProps> = ({
   isOpen,
   setIsOpen,
 }) => {
+  const auth = useAuth();
   const firestore = useFirestore();
 
-  const startTime = moment(Date.now() - time).format("yyyy-MM-DD HH:mm");
-  const endTime = moment(Date.now()).format("yyyy-MM-DD HH:mm");
+  const [startTime, setStartTime] = useState(
+    moment(Date.now() - time).format("yyyy-MM-DD HH:mm")
+  );
+  const [endTime, setEndTime] = useState(
+    moment(Date.now()).format("yyyy-MM-DD HH:mm")
+  );
   const [title, setTitle] = useState("");
-
+  const resetFields = () => {
+    setTitle("");
+    setStartTime(moment().format("yyyy-MM-DD HH:mm"));
+    setEndTime(moment().format("yyyy-MM-DD HH:mm"));
+  };
   const onSubmit = async () => {
     await addDoc(collection(firestore, "schedule"), {
       id: Date.now(),
@@ -41,8 +50,23 @@ export const ModalCreateEvent: FC<ModalCreateEventProps> = ({
     });
     toast({ title: "성공적으로 저장되었습니다." });
     setIsOpen(false);
-    setTitle("");
+    resetFields();
   };
+
+  const handleChange = (setTime: (date: string) => void) => (ev: any) => {
+    if (!ev.target["validity"].valid) return;
+    const dt = ev.target["value"] + ":00Z";
+    setTime(dt.toString().substring(0, 16));
+  };
+
+  const durationSeconds = moment
+    .duration(moment(endTime).diff(startTime))
+    .asMilliseconds();
+  const totalHour = moment.utc(durationSeconds).format("HH");
+  const totalMinute = moment.utc(durationSeconds).add(1, "minute").format("mm");
+  const totalTime = `${Number(totalHour) ? `${Number(totalHour)}시간` : ""} ${
+    Number(totalMinute) ? `${Number(totalMinute)}분 ` : ""
+  }`;
 
   return (
     <>
@@ -60,35 +84,35 @@ export const ModalCreateEvent: FC<ModalCreateEventProps> = ({
               <Label htmlFor="startDate">시작 일</Label>
               <Input
                 value={startTime}
+                onChange={handleChange(setStartTime)}
                 name="startDate"
                 type="datetime-local"
                 required
-                disabled
+                disabled={!auth.currentUser?.email?.startsWith("shimwoan@")}
                 className="border-none p-0"
               />
             </div>
             <div>
               <Label htmlFor="startDate">종료 일</Label>
               <Input
-                value={title}
-                disabled={true}
-                name="startDate"
+                value={endTime}
+                onChange={handleChange(setEndTime)}
+                disabled={!auth.currentUser?.email?.startsWith("shimwoan@")}
+                name="endDate"
                 type="datetime-local"
                 className="border-none p-0"
                 required
               />
             </div>
           </div>
-          <p className="mb-auto">
-            총 시간: {moment.utc(time).add("minute", 1).format("HH시 mm분")}
-          </p>
+          <p className="mb-auto">총 시간: {totalTime}</p>
 
           <Label htmlFor="title" className="mt-5">
             제목
           </Label>
           <Input
             value={title}
-            onChange={(e) => setTitle(e.currentTarget.value)}
+            onChange={(e) => setTitle(e.target.value)}
             name="title"
             placeholder="제목을 입력하세요."
             type="text"
