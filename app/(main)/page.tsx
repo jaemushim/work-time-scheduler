@@ -1,157 +1,112 @@
-import { Badge } from "@/components/ui/badge";
-import { Button, buttonVariants } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+"use client";
+
+import { Calendar, Views, momentLocalizer } from "react-big-calendar";
+import moment from "moment";
+import "moment/locale/ko";
+import Stopwatch from "@/components/ui/stopwatch";
+import React, { useMemo, useState } from "react";
+import "@/lib/react-big-calendar.css";
+import { ModalCreateEvent } from "@/components/modal-create-event";
+import { useFirestore, useFirestoreCollectionData } from "reactfire";
+import { collection, query } from "firebase/firestore";
 import { cn } from "@/lib/utils";
-import Link from "next/link";
-import React from "react";
+import dynamic from "next/dynamic";
+
+const Loader = dynamic(() => import("@/components/loader"));
+
+const localizer = momentLocalizer(moment);
+
+const ColoredDateCellWrapper = ({ children, event, ...rest }: any) => {
+  const hour = Number(moment.utc(event.time).format("HH"));
+  const minute = Number(moment.utc(event.time).format("MM"));
+  return React.cloneElement(React.Children.only(children), {
+    children: (
+      <div className="rbc-event-content">
+        {event.title}{" "}
+        <span className="text-[12px]">
+          {!!hour && `(${hour}시)`} {!!minute && `(${minute}분)`}
+        </span>
+        {/* <p className="absolute right-1 top-[50%] -translate-y-1/2">1h</p> */}
+      </div>
+    ),
+  });
+};
 
 export default function Home() {
+  const { components, messages, defaultDate, views } = useMemo(
+    () => ({
+      components: {
+        eventWrapper: ColoredDateCellWrapper,
+      },
+      defaultDate: new Date(),
+      views: Object.keys(Views)
+        .filter((x) => x !== "WORK_WEEK")
+        .map((k) => (Views as any)[k]),
+      messages: {
+        week: "주",
+        day: "일",
+        month: "월",
+        previous: "<",
+        next: ">",
+        today: `오늘`,
+        agenda: "아젠다",
+      },
+    }),
+    []
+  );
+
+  const [time, setTime] = useState(0);
+  const [isOpenModalCreateEvent, setIsOpenModalCreateEvent] = useState(false);
+  const onSaveTime = (time: number) => {
+    setTime(time);
+    setIsOpenModalCreateEvent(true);
+  };
+
+  // set up query
+  const firestore = useFirestore();
+  const scheduleCollection = collection(firestore, "schedule");
+  const scheduleQuery = query(scheduleCollection);
+
+  // ReactFire!
+  const { status, data: schedules } = useFirestoreCollectionData(scheduleQuery);
+
+  const newSchedules = useMemo(
+    () =>
+      schedules?.map((item) => ({
+        ...item,
+        start: moment(item.start).toDate(),
+        end: moment(item.end).toDate(),
+      })),
+    [schedules]
+  );
+
   return (
     <>
-      <div className="grow flex flex-col items-center justify-evenly">
-        <section className="space-y-6">
-          <div className="container flex flex-col items-center gap-8 text-center">
-            <Badge variant="secondary">Now using the app router!</Badge>
-            <Badge className="space-x-4 font-normal text-sm">
-              <p>
-                <span className="font-bold">Ve</span>rcel
-              </p>
-              <p>
-                <span className="font-bold">Ne</span>xt.js
-              </p>
-              <p>
-                <span className="font-bold">Fi</span>rebase
-              </p>
-              <p>
-                <span className="font-bold">sh</span>adcn/ui
-              </p>
-            </Badge>
-            <h1 className="max-w-4xl font-heading font-semibold text-3xl sm:text-5xl md:text-6xl lg:text-7xl tracking-tighter">
-              Quickly start building your next billion dollar app.
-            </h1>
-            <p className="max-w-2xl leading-normal text-muted-foreground sm:text-xl sm:leading-8">
-              Boilerplate &amp; template for React projects using Next.js,
-              shadcn/ui, Tailwind and Firebase...and TypeScript, of course!
-            </p>
-            <div className="space-x-4">
-              <Link href="/login">
-                <Button size="lg">Call to Action!</Button>
-              </Link>
-              <Link target="_blank" href="https://github.com/enesien/venefish">
-                <Button size="lg" variant="link">
-                  View Project on GitHub &rarr;
-                </Button>
-              </Link>
-            </div>
-          </div>
-        </section>
-        <section className="container mt-8">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-center">
-            <div>
-              <Card className=" shadow-teal-200 shadow-md border-teal-400">
-                <CardHeader>
-                  <CardTitle>Need advanced data parsing?</CardTitle>
-                  <CardDescription>
-                    Check out BestParse/AI for all your parsing needs.
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <Link
-                    href="https://bestparse.com?utm_source=venefish"
-                    target="_blank"
-                    className="underline text-slate-800 font-medium"
-                  >
-                    BestParse/AI
-                  </Link>{" "}
-                  can parse any text to JSON. It's free to use and and gives you
-                  great results when extracting and parsing scraped data, logs,
-                  or any other raw text.
-                  <p className="mt-4 font-semibold">
-                    20% off the pro plan with code "VENEFISH"
-                  </p>
-                  <Link
-                    className={cn(
-                      buttonVariants({ size: "xl", variant: "teal" }),
-                      "mt-4 w-full"
-                    )}
-                    href="https://bestparse.com?utm_source=venefish"
-                  >
-                    Try BestParse/AI &rarr;
-                  </Link>
-                </CardContent>
-              </Card>
-            </div>
-            <div>
-              <Card className=" shadow-emerald-200 shadow-md border-emerald-400">
-                <CardHeader>
-                  <CardTitle>Looking for a job?</CardTitle>
-                  <CardDescription>
-                    Use JobLogr's AI tools to help you find your next job.
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <Link
-                    href="https://joblogr.com?utm_source=venefish&utm_medium=landing&utm_campaign=ten"
-                    target="_blank"
-                    className="underline text-slate-800 font-medium"
-                  >
-                    JobLogr.com
-                  </Link>{" "}
-                  is an awesome job search tool that uses AI to help you find
-                  your next job faster than ever before. It's free to try, but
-                  if you decide to upgrade to the pro plan, you can use code
-                  "VENEFISH" for $10 off.
-                  <Link
-                    className={cn(
-                      buttonVariants({ size: "xl" }),
-                      "mt-4 w-full"
-                    )}
-                    href="https://joblogr.com?utm_source=venefish&utm_medium=landing&utm_campaign=ten"
-                  >
-                    Use JobLogr for Free
-                  </Link>
-                </CardContent>
-              </Card>
-            </div>
-            <div>
-              <Card className=" shadow-slate-200 shadow-md border-slate-400">
-                <CardHeader>
-                  <CardTitle>Need web development?</CardTitle>
-                  <CardDescription>
-                    Check out Enesien Software for all your web development
-                    needs.
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <Link
-                    href="https://enesien.com?utm_source=venefish"
-                    target="_blank"
-                    className="underline text-slate-800 font-medium"
-                  >
-                    Enesien Software
-                  </Link>{" "}
-                  is a web development company that specializes in building
-                  custom web applications. We use modern technologies and
-                  frameworks to build scalable and maintainable web
-                  applications.
-                  <Link
-                    className={cn(
-                      buttonVariants({ variant: "orange", size: "xl" }),
-                      "mt-4 w-full"
-                    )}
-                    href="https://enesien.com?utm_source=venefish"
-                  >
-                    Learn More &rarr;
-                  </Link>
-                </CardContent>
-              </Card>
-            </div>
+      <ModalCreateEvent
+        isOpen={isOpenModalCreateEvent}
+        setIsOpen={setIsOpenModalCreateEvent}
+        time={time}
+      />
+      <div className="flex flex-col items-center gap-8 -mt-10">
+        <Stopwatch onSave={onSaveTime} className="mb-auto" />
+
+        <section className="relative container h-[600px]">
+          {status === "loading" && (
+            <Loader className="absolute left-[50%] top-[42%] -translate-1/2 z-10" />
+          )}
+          <div
+            className={cn("h-full", status === "loading" ? "blur-[1px]" : "")}
+          >
+            <Calendar
+              components={components}
+              defaultDate={defaultDate}
+              events={newSchedules}
+              localizer={localizer}
+              messages={messages}
+              showMultiDayTimes
+              step={60}
+              views={views}
+            />
           </div>
         </section>
       </div>

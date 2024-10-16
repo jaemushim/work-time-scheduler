@@ -8,6 +8,7 @@ import {
   signInWithPopup,
 } from "firebase/auth";
 import { GithubIcon } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { FC, useState } from "react";
 import { useAuth } from "reactfire";
 
@@ -16,6 +17,7 @@ interface Props {
 }
 
 export const ProviderLoginButtons: FC<Props> = ({ onSignIn }) => {
+  const router = useRouter();
   const auth = useAuth();
   const [isLoading, setIsLoading] = useState(false);
 
@@ -24,8 +26,9 @@ export const ProviderLoginButtons: FC<Props> = ({ onSignIn }) => {
       setIsLoading(true);
       await signInWithPopup(auth, provider);
       // create user in your database here
-      toast({ title: "Signed in!" });
+      toast({ title: "로그인 성공!" });
       onSignIn?.();
+      router.push("/");
     } catch (err: any) {
       console.error(err);
       toast({ title: "Error signing in", description: `${err}` });
@@ -40,11 +43,8 @@ export const ProviderLoginButtons: FC<Props> = ({ onSignIn }) => {
         disabled={isLoading}
         onClick={async () => {
           const provider = new GoogleAuthProvider();
-          toast({
-            title: "Oops!",
-            description: "Provider not configured, yet.",
-          });
-          // await doProviderSignIn(provider);
+
+          await doProviderSignIn(provider);
         }}
       >
         <svg
@@ -57,21 +57,6 @@ export const ProviderLoginButtons: FC<Props> = ({ onSignIn }) => {
           <path d="M488 261.8C488 403.3 391.1 504 248 504 110.8 504 0 393.2 0 256S110.8 8 248 8c66.8 0 123 24.5 166.3 64.9l-67.5 64.9C258.5 52.6 94.3 116.6 94.3 256c0 86.5 69.1 156.6 153.7 156.6 98.2 0 135-70.4 140.8-106.9H248v-85.3h236.1c2.3 12.7 3.9 24.9 3.9 41.4z" />
         </svg>
         Google
-      </Button>
-      <Button
-        className="w-full"
-        disabled={isLoading}
-        onClick={async () => {
-          const provider = new GithubAuthProvider();
-          toast({
-            title: "Oops!",
-            description: "Provider not configured, yet.",
-          });
-          // await doProviderSignIn(provider);
-        }}
-      >
-        <GithubIcon className="w-4 h-4 mr-2" />
-        Github
       </Button>
     </>
   );

@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import * as React from "react";
 import {
@@ -49,7 +49,7 @@ export const SignInForm: FC<SignInFormProps> = ({ onShowSignUp }) => {
       await signInWithEmailAndPassword(auth, email, password);
       toast({
         title: "Success!",
-        description: "You have been signed in.",
+        description: "로그인 성공",
       });
     } catch (error) {
       toast({ title: "Error Signing In", description: `${error}` });
