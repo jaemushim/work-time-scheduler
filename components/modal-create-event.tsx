@@ -39,13 +39,16 @@ export const ModalCreateEvent: FC<ModalCreateEventProps> = ({
     setStartTime(moment().format("yyyy-MM-DD HH:mm"));
     setEndTime(moment().format("yyyy-MM-DD HH:mm"));
   };
+  const durationSeconds = moment
+    .duration(moment(endTime).diff(startTime))
+    .asMilliseconds();
   const onSubmit = async () => {
     await addDoc(collection(firestore, "schedule"), {
       id: Date.now(),
       title,
       start: startTime,
       end: endTime,
-      time: moment.duration(moment(endTime).diff(startTime)).asMilliseconds(),
+      time: durationSeconds,
     });
     toast({ title: "성공적으로 저장되었습니다." });
     setIsOpen(false);
@@ -58,9 +61,6 @@ export const ModalCreateEvent: FC<ModalCreateEventProps> = ({
     setTime(dt.toString().substring(0, 16));
   };
 
-  const durationSeconds = moment
-    .duration(moment(endTime).diff(startTime))
-    .asMilliseconds();
   const totalHour = moment.utc(durationSeconds).format("HH");
   const totalMinute = moment.utc(durationSeconds).add(1, "minute").format("mm");
   const totalTime = `${Number(totalHour) ? `${Number(totalHour)}시간` : ""} ${
