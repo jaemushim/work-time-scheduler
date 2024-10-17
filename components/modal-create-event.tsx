@@ -27,7 +27,6 @@ export const ModalCreateEvent: FC<ModalCreateEventProps> = ({
 }) => {
   const auth = useAuth();
   const firestore = useFirestore();
-
   const [startTime, setStartTime] = useState(
     moment(Date.now() - time).format("yyyy-MM-DD HH:mm")
   );
@@ -46,7 +45,7 @@ export const ModalCreateEvent: FC<ModalCreateEventProps> = ({
       title,
       start: startTime,
       end: endTime,
-      time,
+      time: moment.duration(moment(endTime).diff(startTime)).asMilliseconds(),
     });
     toast({ title: "성공적으로 저장되었습니다." });
     setIsOpen(false);

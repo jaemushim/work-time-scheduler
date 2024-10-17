@@ -4,7 +4,7 @@ import { Calendar, Views, momentLocalizer } from "react-big-calendar";
 import moment from "moment";
 import "moment/locale/ko";
 import Stopwatch from "@/components/ui/stopwatch";
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import "@/lib/react-big-calendar.css";
 import { ModalCreateEvent } from "@/components/modal-create-event";
 import { useAuth, useFirestore, useFirestoreCollectionData } from "reactfire";
@@ -13,24 +13,22 @@ import { cn } from "@/lib/utils";
 import dynamic from "next/dynamic";
 import { toast } from "@/components/ui/use-toast";
 import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import { ModalBilling } from "@/components/modal-billing";
 
 const localizer = momentLocalizer(moment);
 
 const ColoredDateCellWrapper = ({ children, event, ...rest }: any) => {
-  const durationSeconds = moment
-    .duration(moment(event.end).diff(event.start))
-    .asMilliseconds();
-  const hour = Number(moment.utc(durationSeconds).format("HH"));
-  const minute = Number(moment.utc(durationSeconds).format("MM"));
+  const totalHour = moment.utc(event.time).format("HH");
+  const totalMinute = moment.utc(event.time).add(1, "minute").format("mm");
+  const totalTime = `${Number(totalHour) ? `${Number(totalHour)}시간` : ""} ${
+    Number(totalMinute) ? `${Number(totalMinute)}분 ` : ""
+  }`;
 
   return React.cloneElement(React.Children.only(children), {
     children: (
       <div className="rbc-event-content">
-        {event.title}{" "}
-        <span className="text-[12px]">
-          ({Number(hour) ? `${hour}시간` : ""}{" "}
-          {Number(minute) ? `${minute}분` : ""})
-        </span>
+        {event.title} <span className="text-[12px]">({totalTime})</span>
       </div>
     ),
   });
@@ -96,6 +94,22 @@ export default function Home() {
     return true;
   };
 
+  const totalSeconds = newSchedules?.reduce((acc, cur: any) => {
+    return acc + cur.time;
+  }, 0);
+  const totalHour = moment.utc(totalSeconds).format("HH");
+  const totalMinute = moment.utc(totalSeconds).add(1, "minute").format("mm");
+  const totalTime = `${Number(totalHour) ? `${Number(totalHour)}시간` : ""} ${
+    Number(totalMinute) ? `${Number(totalMinute)}분 ` : ""
+  }`;
+
+  const [domLoaded, setDomLoaded] = useState(false);
+  useEffect(() => {
+    setDomLoaded(true);
+  }, []);
+
+  const [isOpenModalBilling, setIsOpenModalBilling] = useState(false);
+
   return (
     <>
       <ModalCreateEvent
@@ -103,14 +117,30 @@ export default function Home() {
         setIsOpen={setIsOpenModalCreateEvent}
         time={time}
       />
+      <ModalBilling
+        schedules={newSchedules as any}
+        isOpen={isOpenModalBilling}
+        setIsOpen={setIsOpenModalBilling}
+      />
+
       <div className="flex flex-col items-center gap-8 -mt-10">
         <Stopwatch
           onStart={onStartStopwatch}
           onSave={onSaveTime}
           className="mb-auto"
         />
-
         <section className="relative container h-[600px]">
+          <div className="absolute top-[-48px] right-0 flex items-end gap-2 px-8">
+            {!!totalSeconds && domLoaded && `이번달 총 시간: ${totalTime}`}
+            <Button
+              onClick={() => setIsOpenModalBilling(true)}
+              variant="teal"
+              size="sm"
+            >
+              비용 청구
+            </Button>
+          </div>
+
           <div className={cn("h-full")}>
             <Calendar
               components={components}
