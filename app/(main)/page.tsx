@@ -1,7 +1,6 @@
 "use client";
 
 import { Calendar, Views, momentLocalizer } from "react-big-calendar";
-import "moment/locale/ko";
 import Stopwatch from "@/components/ui/stopwatch";
 import React, { useEffect, useMemo, useState } from "react";
 import "@/lib/react-big-calendar.css";
@@ -15,9 +14,12 @@ import { Button } from "@/components/ui/button";
 import { ModalBilling } from "@/components/modal-billing";
 import moment from "moment";
 import momentDurationFormatSetup from "moment-duration-format";
-momentDurationFormatSetup(moment as any);
-const localizer = momentLocalizer(moment);
+import "moment/locale/ko";
 
+momentDurationFormatSetup(moment as any);
+moment.locale("ko");
+
+const localizer = momentLocalizer(moment);
 const ColoredDateCellWrapper = ({ children, event, ...rest }: any) => {
   const totalHour = moment.utc(event.time).format("HH");
   const totalMinute = moment.utc(event.time).add(1, "minute").format("mm");
@@ -63,7 +65,7 @@ export default function Home() {
         agenda: "아젠다",
       },
     }),
-    []
+    [moment]
   );
 
   const [isOpenModalCreateEvent, setIsOpenModalCreateEvent] = useState(false);
@@ -170,6 +172,7 @@ export default function Home() {
               views={views}
             />
           </div>
+          <div className="h-10"></div>
         </section>
       </div>
     </>
