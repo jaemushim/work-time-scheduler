@@ -1,7 +1,6 @@
 "use client";
 
 import { Calendar, Views, momentLocalizer } from "react-big-calendar";
-import moment from "moment";
 import "moment/locale/ko";
 import Stopwatch from "@/components/ui/stopwatch";
 import React, { useEffect, useMemo, useState } from "react";
@@ -10,12 +9,13 @@ import { ModalCreateEvent } from "@/components/modal-create-event";
 import { useAuth, useFirestore, useFirestoreCollectionData } from "reactfire";
 import { collection, query } from "firebase/firestore";
 import { cn } from "@/lib/utils";
-import dynamic from "next/dynamic";
 import { toast } from "@/components/ui/use-toast";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { ModalBilling } from "@/components/modal-billing";
-
+import moment from "moment";
+import momentDurationFormatSetup from "moment-duration-format";
+momentDurationFormatSetup(moment as any);
 const localizer = momentLocalizer(moment);
 
 const ColoredDateCellWrapper = ({ children, event, ...rest }: any) => {
@@ -101,12 +101,15 @@ export default function Home() {
   const totalSeconds = newSchedules?.reduce((acc, cur: any) => {
     return acc + cur.time;
   }, 0);
-  const totalHour = moment.utc(totalSeconds).format("HH");
-  const totalMinute = moment.utc(totalSeconds).add(1, "minute").format("mm");
-  const totalTime = `${Number(totalHour) ? `${Number(totalHour)}시간` : ""} ${
-    Number(totalMinute) ? `${Number(totalMinute)}분 ` : ""
-  }`;
+  const hour = Math.trunc(
+    moment.duration(totalSeconds, "milliseconds").asHours()
+  );
+  const forMinuteSeconds =
+    totalSeconds - moment.duration(hour, "hours").asMilliseconds();
+  const minutes = moment.duration(forMinuteSeconds, "milliseconds").asMinutes();
 
+  const totalTime = `${Math.floor(hour / 8)}일 ${hour % 8}시간 ${minutes}분`;
+  console.log("totalTime", totalTime);
   const [domLoaded, setDomLoaded] = useState(false);
   useEffect(() => {
     setDomLoaded(true);
@@ -136,7 +139,7 @@ export default function Home() {
           className="mb-auto"
         />
         <section className="relative container h-[600px]">
-          <div className="absolute top-[-48px] right-0 flex items-end gap-2 px-8">
+          <div className="absolute top-[-48px] right-0 flex items-end gap-5 px-8">
             {!!totalSeconds && domLoaded && `이번달 총 시간: ${totalTime}`}
             <Button
               onClick={() => setIsOpenModalBilling(true)}
