@@ -18,21 +18,23 @@ interface ModalCreateEventProps {
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
   time: number;
+  endTime: string;
+  setEndTime: (date: string) => void;
 }
 
 export const ModalCreateEvent: FC<ModalCreateEventProps> = ({
   time,
   isOpen,
   setIsOpen,
+  endTime,
+  setEndTime,
 }) => {
   const auth = useAuth();
   const firestore = useFirestore();
   const [startTime, setStartTime] = useState(
     moment(Date.now() - time).format("yyyy-MM-DD HH:mm")
   );
-  const [endTime, setEndTime] = useState(
-    moment(Date.now()).format("yyyy-MM-DD HH:mm")
-  );
+
   const [title, setTitle] = useState("");
   const resetFields = () => {
     setTitle("");
@@ -42,6 +44,7 @@ export const ModalCreateEvent: FC<ModalCreateEventProps> = ({
   const durationSeconds = moment
     .duration(moment(endTime).diff(startTime))
     .asMilliseconds();
+
   const onSubmit = async () => {
     await addDoc(collection(firestore, "schedule"), {
       id: Date.now(),

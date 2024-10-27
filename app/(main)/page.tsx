@@ -35,6 +35,10 @@ const ColoredDateCellWrapper = ({ children, event, ...rest }: any) => {
 };
 
 export default function Home() {
+  const [endTime, setEndTime] = useState(
+    moment(Date.now()).format("yyyy-MM-DD HH:mm")
+  );
+
   const { components, messages, defaultDate, views } = useMemo(
     () => ({
       components: {
@@ -60,10 +64,10 @@ export default function Home() {
   const [time, setTime] = useState(0);
   const [isOpenModalCreateEvent, setIsOpenModalCreateEvent] = useState(false);
   const onSaveTime = (time: number) => {
+    setEndTime(moment().format("yyyy-MM-DD HH:mm"));
     setTime(time);
     setIsOpenModalCreateEvent(true);
   };
-
   // set up query
   const firestore = useFirestore();
   const scheduleCollection = collection(firestore, "schedule");
@@ -113,6 +117,8 @@ export default function Home() {
   return (
     <>
       <ModalCreateEvent
+        endTime={endTime}
+        setEndTime={setEndTime}
         isOpen={isOpenModalCreateEvent}
         setIsOpen={setIsOpenModalCreateEvent}
         time={time}
