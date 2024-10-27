@@ -18,6 +18,8 @@ interface ModalCreateEventProps {
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
   time: number;
+  startTime: string;
+  setStartTime: (date: string) => void;
   endTime: string;
   setEndTime: (date: string) => void;
 }
@@ -26,14 +28,13 @@ export const ModalCreateEvent: FC<ModalCreateEventProps> = ({
   time,
   isOpen,
   setIsOpen,
+  startTime,
+  setStartTime,
   endTime,
   setEndTime,
 }) => {
   const auth = useAuth();
   const firestore = useFirestore();
-  const [startTime, setStartTime] = useState(
-    moment(Date.now() - time).format("yyyy-MM-DD HH:mm")
-  );
 
   const [title, setTitle] = useState("");
   const resetFields = () => {

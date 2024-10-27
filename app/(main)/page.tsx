@@ -35,6 +35,11 @@ const ColoredDateCellWrapper = ({ children, event, ...rest }: any) => {
 };
 
 export default function Home() {
+  const [time, setTime] = useState(0);
+  const [startTime, setStartTime] = useState(
+    moment(Date.now() - time).format("yyyy-MM-DD HH:mm")
+  );
+
   const [endTime, setEndTime] = useState(
     moment(Date.now()).format("yyyy-MM-DD HH:mm")
   );
@@ -61,7 +66,6 @@ export default function Home() {
     []
   );
 
-  const [time, setTime] = useState(0);
   const [isOpenModalCreateEvent, setIsOpenModalCreateEvent] = useState(false);
   const onSaveTime = (time: number) => {
     setEndTime(moment().format("yyyy-MM-DD HH:mm"));
@@ -89,6 +93,8 @@ export default function Home() {
   const auth = useAuth();
   const router = useRouter();
   const onStartStopwatch = () => {
+    setStartTime(moment().format("yyyy-MM-DD HH:mm"));
+
     if (!auth.currentUser) {
       toast({ title: "로그인이 필요합니다." });
       router.push("/login");
@@ -120,6 +126,8 @@ export default function Home() {
   return (
     <>
       <ModalCreateEvent
+        startTime={startTime}
+        setStartTime={setStartTime}
         endTime={endTime}
         setEndTime={setEndTime}
         isOpen={isOpenModalCreateEvent}
