@@ -9,6 +9,7 @@ import {
   Document,
   PDFViewer,
   Font,
+  Image,
 } from "@react-pdf/renderer";
 import moment from "moment";
 type Schedule = {
@@ -17,6 +18,7 @@ type Schedule = {
   start: string;
   end: string;
   time: number;
+  img?: string;
 };
 
 interface ModalBillingProps {
@@ -60,11 +62,14 @@ export const ModalBilling: FC<ModalBillingProps> = ({
   const totalSeconds = schedules?.reduce((acc, cur: any) => {
     return acc + cur.time;
   }, 0);
-  const totalHour = moment.utc(totalSeconds).format("HH");
-  const totalMinute = moment.utc(totalSeconds).add(1, "minute").format("mm");
-  const totalTime = `${Number(totalHour) ? `${Number(totalHour)}시간` : ""} ${
-    Number(totalMinute) ? `${Number(totalMinute)}분 ` : ""
-  }`;
+  const hour = Math.trunc(
+    moment.duration(totalSeconds, "milliseconds").asHours()
+  );
+  const forMinuteSeconds =
+    totalSeconds - moment.duration(hour, "hours").asMilliseconds();
+  const minutes = moment.duration(forMinuteSeconds, "milliseconds").asMinutes();
+
+  const totalTime = `${Math.floor(hour / 8)}일 ${hour % 8}시간 ${minutes}분`;
 
   return (
     <>
@@ -123,24 +128,32 @@ export const ModalBilling: FC<ModalBillingProps> = ({
                   } ${Number(totalMinute) ? `${Number(totalMinute)}분 ` : ""}`;
 
                   return (
-                    <View
-                      style={{
-                        display: "flex",
-                        flexDirection: "row",
-                        justifyContent: "space-between",
-                        padding: "4px 0",
-                        fontSize: "11px",
-                      }}
-                    >
-                      <Text style={{ width: "55%", textAlign: "center" }}>
-                        {item.title}
-                      </Text>
-                      <Text style={{ width: "20%", textAlign: "center" }}>
-                        {totalTime}
-                      </Text>
-                      <Text style={{ width: "25%", textAlign: "center" }}>
-                        {moment(item.end).format("YYYY-MM-DD a HH:mm")}
-                      </Text>
+                    <View key={item.id}>
+                      <View
+                        style={{
+                          display: "flex",
+                          flexDirection: "row",
+                          justifyContent: "space-between",
+                          padding: "4px 0",
+                          fontSize: "11px",
+                        }}
+                      >
+                        <Text style={{ width: "55%", textAlign: "center" }}>
+                          {item.title}
+                        </Text>
+                        <Text style={{ width: "20%", textAlign: "center" }}>
+                          {totalTime}
+                        </Text>
+                        <Text style={{ width: "25%", textAlign: "center" }}>
+                          {moment(item.end).format("YYYY-MM-DD a HH:mm")}
+                        </Text>
+                      </View>
+                      {item.img && (
+                        <Image
+                          src={item.img}
+                          style={{ marginBottom: "8px" }}
+                        ></Image>
+                      )}
                     </View>
                   );
                 })}
