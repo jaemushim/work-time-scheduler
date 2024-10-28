@@ -6,7 +6,7 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import "@/lib/react-big-calendar.css";
 import { ModalCreateEvent } from "@/components/modal-create-event";
 import { useAuth, useFirestore, useFirestoreCollectionData } from "reactfire";
-import { collection, query } from "firebase/firestore";
+import { collection, orderBy, query } from "firebase/firestore";
 import { cn } from "@/lib/utils";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
@@ -81,7 +81,7 @@ export default function Home() {
   // set up query
   const firestore = useFirestore();
   const scheduleCollection = collection(firestore, "schedule");
-  const scheduleQuery = query(scheduleCollection);
+  const scheduleQuery = query(scheduleCollection, orderBy("end"));
 
   // ReactFire!
   const { status, data: schedules } = useFirestoreCollectionData(scheduleQuery);
