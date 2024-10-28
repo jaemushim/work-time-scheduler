@@ -29,6 +29,9 @@ importers:
       '@radix-ui/react-navigation-menu':
         specifier: ^1.1.4
         version: 1.2.1(@types/react-dom@18.3.1)(@types/react@18.3.11)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@radix-ui/react-scroll-area':
+        specifier: ^1.2.0
+        version: 1.2.0(@types/react-dom@18.3.1)(@types/react@18.3.11)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@radix-ui/react-separator':
         specifier: ^1.0.3
         version: 1.1.0(@types/react-dom@18.3.1)(@types/react@18.3.11)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -44,6 +47,18 @@ importers:
       '@react-pdf/renderer':
         specifier: ^4.0.0
         version: 4.0.0(encoding@0.1.13)(react@18.3.1)
+      '@rpldy/mock-sender':
+        specifier: ^1.8.3
+        version: 1.8.3
+      '@rpldy/upload-paste':
+        specifier: ^1.8.3
+        version: 1.8.3(react@18.3.1)
+      '@rpldy/upload-preview':
+        specifier: ^1.8.3
+        version: 1.8.3(react@18.3.1)
+      '@rpldy/uploady':
+        specifier: ^1.8.3
+        version: 1.8.3(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@types/moment-duration-format':
         specifier: ^2.2.6
         version: 2.2.6
@@ -478,6 +493,9 @@ packages:
   '@protobufjs/utf8@1.1.0':
     resolution: {integrity: sha512-Vvn3zZrhQZkkBE8LSuW3em98c0FwgO4nxzv6OdSxPKJIEKY2bGbHn+mhGIPerzI4twdxaP8/0+06HBpwf345Lw==}
 
+  '@radix-ui/number@1.1.0':
+    resolution: {integrity: sha512-V3gRzhVNU1ldS5XhAPTom1fOIo4ccrjjJgmE+LI2h/WaFpHmx0MQApT+KZHnx8abG6Avtfcz4WoEciMnpFT3HQ==}
+
   '@radix-ui/primitive@1.1.0':
     resolution: {integrity: sha512-4Z8dn6Upk0qk4P74xBhZ6Hd/w0mPEzOOLxy4xiPXOXqjF7jZS0VAKk7/x/H6FyY2zCkYJqePf1G5KmkmNJ4RBA==}
 
@@ -735,6 +753,19 @@ packages:
       '@types/react-dom':
         optional: true
 
+  '@radix-ui/react-scroll-area@1.2.0':
+    resolution: {integrity: sha512-q2jMBdsJ9zB7QG6ngQNzNwlvxLQqONyL58QbEGwuyRZZb/ARQwk3uQVbCF7GvQVOtV6EU/pDxAw3zRzJZI3rpQ==}
+    peerDependencies:
+      '@types/react': '*'
+      '@types/react-dom': '*'
+      react: ^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc
+      react-dom: ^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc
+    peerDependenciesMeta:
+      '@types/react':
+        optional: true
+      '@types/react-dom':
+        optional: true
+
   '@radix-ui/react-separator@1.1.0':
     resolution: {integrity: sha512-3uBAs+egzvJBDZAzvb/n4NxxOYpnspmWxO2u5NbZ8Y6FM/NdrGSF9bop3Cf6F6C71z1rTSn8KV0Fo2ZVd79lGA==}
     peerDependencies:
@@ -904,6 +935,51 @@ packages:
     resolution: {integrity: sha512-f7aCv7c+nU/3mF7NWLtVVr0Ra80RqsO89hO72r+Y/nvQr5+q0UFGkocElTH6MJApvReVh6JHUFYn2cw1WdHF3w==}
     peerDependencies:
       react: '>=16.8.0'
+
+  '@rpldy/abort@1.8.3':
+    resolution: {integrity: sha512-vDbXvXGpd+JQ4xyIr8NlzgEkdRhv+krPigb/R0Lbu+jj0eWq0QHUHOI/Bz7KBJTW+Q171+Kw81M29QHRArsKSQ==}
+
+  '@rpldy/life-events@1.8.3':
+    resolution: {integrity: sha512-lHXTSaIRop2jIviZWRXUtDyUd4u1QnyY75iOZE3BgHK1hp9onhdhwia2vyGHMQtsq0XaqTb68CsKzGs4oibi4w==}
+
+  '@rpldy/mock-sender@1.8.3':
+    resolution: {integrity: sha512-pQg6HqWT45bi1T4Y6o/EGYsZQYOe30sVABCid/NnUOUdKy5dGyCWi9YiK23m0x1r3lnhd4LU/Zp14FcsOHEs7w==}
+
+  '@rpldy/raw-uploader@1.8.3':
+    resolution: {integrity: sha512-3VtOMuGYWnPc0mwPc7Kh167W3FsKFECEuHDwqIo4lQ1GJnwuBeoUckU9qR/gdNY5yG9BR1usF4WqyPYqEkjL7Q==}
+
+  '@rpldy/sender@1.8.3':
+    resolution: {integrity: sha512-VlinXCPAuzJGIkh/0VBAylH8vtXzNJ9gKGc/LC+6pzelCyPZyMZbYOJqE1tvOgEik16jyUO2Zo6Qvsl1a9hH6A==}
+
+  '@rpldy/shared-ui@1.8.3':
+    resolution: {integrity: sha512-kN9Rx1YZoUsq+dcihGbN7qpdtaP3kMagP5b4DrFNrHmeR68MtAYzDbJdrLl46DOXgfks6ZZI32fIy352yTfgrw==}
+    peerDependencies:
+      react: '>=16.8'
+
+  '@rpldy/shared@1.8.3':
+    resolution: {integrity: sha512-UIli2+ryxrJDzfQqDGdg5VWwB7dpyMrGmf/ST1e9xvuL6nQRO/oYJN5c2zwzHqOY5AKV3NN34HJrABM0XM4Eaw==}
+
+  '@rpldy/simple-state@1.8.3':
+    resolution: {integrity: sha512-I2qwsLNk3B0o7CeSHv0eFzGWe/SRxVU3e1zdiY9/nGwnlkvajWMxDb58sLkiL5U+50ljfb6a/39x89c0JQSYDQ==}
+
+  '@rpldy/upload-paste@1.8.3':
+    resolution: {integrity: sha512-uV7FMGq3lDYggwpe/eaUkC73AR+Ueu8qUbCO0iG1s7mukWmQ+kVnYi/mbVH8EsPAItgQ84z0lpckT1ADrh3UTg==}
+    peerDependencies:
+      react: '>=16.8'
+
+  '@rpldy/upload-preview@1.8.3':
+    resolution: {integrity: sha512-zwXmsEpvyGMQ3E472Dsdh79k3GCViIbttLr7aC3DvrkTgeoXhFkLBri91LnKvudIfsaBSG72QB5c36SHJs/ijg==}
+    peerDependencies:
+      react: '>=16.8'
+
+  '@rpldy/uploader@1.8.3':
+    resolution: {integrity: sha512-5NmcvdwuclNPU0DJM9DLMjNRr3YkJ95wqAjIlaWpnchFFWtwKDNLoUZC6AA2lATJ5+Y+ykowobnXtUHaO5IGCQ==}
+
+  '@rpldy/uploady@1.8.3':
+    resolution: {integrity: sha512-FkJghfbaTAIJfEIphpXiR/yl4A9UjQoMSMvymv7mf3Jjl2Ww/3ZJ9YJJQUTUx4a91F0PHM1cOncHJnUGLoz3nA==}
+    peerDependencies:
+      react: '>=16.8'
+      react-dom: '>=16.8'
 
   '@swc/counter@0.1.3':
     resolution: {integrity: sha512-e2BR4lsJkkRlKZ/qCHPw9ZaSxc0MVUd7gtbtaB7aMvHeJVYe8sOB8DBZkP2DtISHGSku9sCK6T6cnY0CtXrOCQ==}
@@ -1281,6 +1357,9 @@ packages:
 
   js-tokens@4.0.0:
     resolution: {integrity: sha512-RdJUflcE3cUzKiMqQgsCu06FPu9UdIJO0beYbPhHN4k6apgJtifcoCtT9bcxOpYBtpD2kCM6Sbzg4CausW/PKQ==}
+
+  just-throttle@4.2.0:
+    resolution: {integrity: sha512-/iAZv1953JcExpvsywaPKjSzfTiCLqeguUTE6+VmK15mOcwxBx7/FHrVvS4WEErMR03TRazH8kcBSHqMagYIYg==}
 
   lilconfig@2.1.0:
     resolution: {integrity: sha512-utWOt/GHzuUxnLKxB6dk81RoOeoNeHgbrXiuGk4yyF5qlRz+iIVWu56E2fqGHFrXz0QNUhLB/8nKqvRH66JKGQ==}
@@ -2319,6 +2398,8 @@ snapshots:
 
   '@protobufjs/utf8@1.1.0': {}
 
+  '@radix-ui/number@1.1.0': {}
+
   '@radix-ui/primitive@1.1.0': {}
 
   '@radix-ui/react-arrow@1.1.0(@types/react-dom@18.3.1)(@types/react@18.3.11)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
@@ -2577,6 +2658,23 @@ snapshots:
       '@types/react': 18.3.11
       '@types/react-dom': 18.3.1
 
+  '@radix-ui/react-scroll-area@1.2.0(@types/react-dom@18.3.1)(@types/react@18.3.11)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
+    dependencies:
+      '@radix-ui/number': 1.1.0
+      '@radix-ui/primitive': 1.1.0
+      '@radix-ui/react-compose-refs': 1.1.0(@types/react@18.3.11)(react@18.3.1)
+      '@radix-ui/react-context': 1.1.1(@types/react@18.3.11)(react@18.3.1)
+      '@radix-ui/react-direction': 1.1.0(@types/react@18.3.11)(react@18.3.1)
+      '@radix-ui/react-presence': 1.1.1(@types/react-dom@18.3.1)(@types/react@18.3.11)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@radix-ui/react-primitive': 2.0.0(@types/react-dom@18.3.1)(@types/react@18.3.11)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@radix-ui/react-use-callback-ref': 1.1.0(@types/react@18.3.11)(react@18.3.1)
+      '@radix-ui/react-use-layout-effect': 1.1.0(@types/react@18.3.11)(react@18.3.1)
+      react: 18.3.1
+      react-dom: 18.3.1(react@18.3.1)
+    optionalDependencies:
+      '@types/react': 18.3.11
+      '@types/react-dom': 18.3.1
+
   '@radix-ui/react-separator@1.1.0(@types/react-dom@18.3.1)(@types/react@18.3.11)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
     dependencies:
       '@radix-ui/react-primitive': 2.0.0(@types/react-dom@18.3.1)(@types/react@18.3.11)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -2797,6 +2895,73 @@ snapshots:
     dependencies:
       dequal: 2.0.3
       react: 18.3.1
+
+  '@rpldy/abort@1.8.3':
+    dependencies:
+      '@rpldy/raw-uploader': 1.8.3
+      '@rpldy/shared': 1.8.3
+      '@rpldy/simple-state': 1.8.3
+
+  '@rpldy/life-events@1.8.3':
+    dependencies:
+      '@rpldy/shared': 1.8.3
+
+  '@rpldy/mock-sender@1.8.3':
+    dependencies:
+      '@rpldy/shared': 1.8.3
+
+  '@rpldy/raw-uploader@1.8.3':
+    dependencies:
+      '@rpldy/life-events': 1.8.3
+      '@rpldy/shared': 1.8.3
+
+  '@rpldy/sender@1.8.3':
+    dependencies:
+      '@rpldy/shared': 1.8.3
+
+  '@rpldy/shared-ui@1.8.3(react@18.3.1)':
+    dependencies:
+      '@rpldy/shared': 1.8.3
+      '@rpldy/uploader': 1.8.3
+      react: 18.3.1
+
+  '@rpldy/shared@1.8.3':
+    dependencies:
+      invariant: 2.2.4
+      just-throttle: 4.2.0
+
+  '@rpldy/simple-state@1.8.3':
+    dependencies:
+      '@rpldy/shared': 1.8.3
+
+  '@rpldy/upload-paste@1.8.3(react@18.3.1)':
+    dependencies:
+      '@rpldy/shared-ui': 1.8.3(react@18.3.1)
+      react: 18.3.1
+
+  '@rpldy/upload-preview@1.8.3(react@18.3.1)':
+    dependencies:
+      '@rpldy/shared': 1.8.3
+      '@rpldy/shared-ui': 1.8.3(react@18.3.1)
+      react: 18.3.1
+
+  '@rpldy/uploader@1.8.3':
+    dependencies:
+      '@rpldy/abort': 1.8.3
+      '@rpldy/life-events': 1.8.3
+      '@rpldy/raw-uploader': 1.8.3
+      '@rpldy/sender': 1.8.3
+      '@rpldy/shared': 1.8.3
+      '@rpldy/simple-state': 1.8.3
+
+  '@rpldy/uploady@1.8.3(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
+    dependencies:
+      '@rpldy/life-events': 1.8.3
+      '@rpldy/shared': 1.8.3
+      '@rpldy/shared-ui': 1.8.3(react@18.3.1)
+      '@rpldy/uploader': 1.8.3
+      react: 18.3.1
+      react-dom: 18.3.1(react@18.3.1)
 
   '@swc/counter@0.1.3': {}
 
@@ -3189,6 +3354,8 @@ snapshots:
   jiti@1.21.6: {}
 
   js-tokens@4.0.0: {}
+
+  just-throttle@4.2.0: {}
 
   lilconfig@2.1.0: {}
 

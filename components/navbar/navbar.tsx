@@ -9,7 +9,7 @@ export const NavBar: FC = () => {
   return (
     <>
       <div className="animate-in fade-in w-full">
-        <nav className="container py-4">
+        <nav className="container py-4 px-0">
           <div className="flex items-center">
             <Link
               href="/"

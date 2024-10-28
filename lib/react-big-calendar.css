@@ -58,7 +58,6 @@ button.rbc-input::-moz-focus-inner {
   overflow: hidden;
   font-size: 12px;
   line-height: 12px;
-  padding: 3px;
   /* text-overflow: ellipsis; */
   /* white-space: nowrap; */
 }
@@ -265,10 +264,11 @@ button.rbc-input::-moz-focus-inner {
   -webkit-box-shadow: none;
           box-shadow: none;
   margin: 0;
-  padding: 2px 16px 0 5px;
-  background-color: #3270EE;
+  padding: 0;
   border-radius: 5px;
-  color: #fff;
+  padding-top:4px;
+  padding-bottom:4px;
+  color: #222;
   cursor: pointer;
   width: 100%;
   text-align: left;
@@ -389,7 +389,6 @@ button.rbc-input::-moz-focus-inner {
           flex: 1 0 0;
   -ms-flex-preferred-size: 0px;
       flex-basis: 0px;
-  height: 100%;
 }
 .rbc-month-row + .rbc-month-row {
   border-top: 1px solid #ddd;

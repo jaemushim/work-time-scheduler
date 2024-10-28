@@ -2,19 +2,19 @@
 
 import { Calendar, Views, momentLocalizer } from "react-big-calendar";
 import Stopwatch from "@/components/ui/stopwatch";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import "@/lib/react-big-calendar.css";
 import { ModalCreateEvent } from "@/components/modal-create-event";
 import { useAuth, useFirestore, useFirestoreCollectionData } from "reactfire";
 import { collection, query } from "firebase/firestore";
 import { cn } from "@/lib/utils";
-import { toast } from "@/components/ui/use-toast";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { ModalBilling } from "@/components/modal-billing";
 import moment from "moment";
 import momentDurationFormatSetup from "moment-duration-format";
 import "moment/locale/ko";
+import BgImg from "@/components/bg-img";
 
 momentDurationFormatSetup(moment as any);
 moment.locale("ko");
@@ -30,7 +30,11 @@ const ColoredDateCellWrapper = ({ children, event, ...rest }: any) => {
   return React.cloneElement(React.Children.only(children), {
     children: (
       <div className="rbc-event-content">
-        {event.title} <span className="text-[12px]">({totalTime})</span>
+        <p className="p-1 bg-white">
+          {event.title}{" "}
+          <span className="inline-flex text-[12px]">({totalTime})</span>
+        </p>
+        {event.img && <BgImg src={event.img} alt="" />}
       </div>
     ),
   });
@@ -97,11 +101,11 @@ export default function Home() {
   const onStartStopwatch = () => {
     setStartTime(moment().format("yyyy-MM-DD HH:mm"));
 
-    if (!auth.currentUser) {
-      toast({ title: "로그인이 필요합니다." });
-      router.push("/login");
-      return false;
-    }
+    // if (!auth.currentUser) {
+    //   toast({ title: "로그인이 필요합니다." });
+    //   router.push("/login");
+    //   return false;
+    // }
 
     return true;
   };
@@ -117,7 +121,6 @@ export default function Home() {
   const minutes = moment.duration(forMinuteSeconds, "milliseconds").asMinutes();
 
   const totalTime = `${Math.floor(hour / 8)}일 ${hour % 8}시간 ${minutes}분`;
-  console.log("totalTime", totalTime);
   const [domLoaded, setDomLoaded] = useState(false);
   useEffect(() => {
     setDomLoaded(true);
@@ -148,8 +151,8 @@ export default function Home() {
           onSave={onSaveTime}
           className="mb-auto"
         />
-        <section className="relative container h-[600px]">
-          <div className="absolute top-[-48px] right-0 flex items-end gap-5 px-8">
+        <section className="relative container h-[600px] px-0">
+          <div className="absolute top-[-48px] right-0 flex items-end gap-5">
             {!!totalSeconds && domLoaded && `이번달 총 시간: ${totalTime}`}
             <Button
               onClick={() => setIsOpenModalBilling(true)}
@@ -172,7 +175,6 @@ export default function Home() {
               views={views}
             />
           </div>
-          <div className="h-10"></div>
         </section>
       </div>
     </>
