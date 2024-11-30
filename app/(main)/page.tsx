@@ -6,7 +6,7 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import "@/lib/react-big-calendar.css";
 import { ModalCreateEvent } from "@/components/modal-create-event";
 import { useAuth, useFirestore, useFirestoreCollectionData } from "reactfire";
-import { collection, orderBy, query } from "firebase/firestore";
+import { collection, doc, orderBy, query, updateDoc } from "firebase/firestore";
 import { cn } from "@/lib/utils";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
@@ -15,22 +15,35 @@ import moment from "moment";
 import momentDurationFormatSetup from "moment-duration-format";
 import "moment/locale/ko";
 import BgImg from "@/components/bg-img";
+import { FormProvider, useForm, useFormContext } from "react-hook-form";
 
 momentDurationFormatSetup(moment as any);
 moment.locale("ko");
 
 const localizer = momentLocalizer(moment);
 const ColoredDateCellWrapper = ({ children, event, ...rest }: any) => {
+  const { register } = useFormContext();
   const totalHour = moment.utc(event.time).format("HH");
   const totalMinute = moment.utc(event.time).add(1, "minute").format("mm");
   const totalTime = `${Number(totalHour) ? `${Number(totalHour)}시간` : ""} ${
     Number(totalMinute) ? `${Number(totalMinute)}분 ` : ""
   }`;
-
   return React.cloneElement(React.Children.only(children), {
     children: (
-      <div className="rbc-event-content">
+      <div
+        className={`"rbc-event-content" ${
+          event.state === "DONE" ? "opacity-30" : ""
+        }`}
+      >
         <p className="p-1 bg-white">
+          <div className="relative z-100">
+            <input
+              {...register("done")}
+              type={"checkbox"}
+              value={event.NO_ID_FIELD}
+              className="cursor-pointer"
+            />
+          </div>
           {event.title}{" "}
           <span className="inline-flex text-[12px]">({totalTime})</span>
         </p>
@@ -85,7 +98,6 @@ export default function Home() {
 
   // ReactFire!
   const { status, data: schedules } = useFirestoreCollectionData(scheduleQuery);
-
   const newSchedules = useMemo(
     () =>
       schedules?.map((item) => ({
@@ -110,7 +122,10 @@ export default function Home() {
     return true;
   };
 
-  const totalSeconds = newSchedules?.reduce((acc, cur: any) => {
+  const notDoneNewSchedules = newSchedules?.filter(
+    (item: any) => item.state !== "DONE"
+  );
+  const totalSeconds = notDoneNewSchedules?.reduce((acc, cur: any) => {
     return acc + cur.time;
   }, 0);
   const hour = Math.trunc(
@@ -128,8 +143,20 @@ export default function Home() {
 
   const [isOpenModalBilling, setIsOpenModalBilling] = useState(false);
 
+  const methods = useForm();
+  const checks = methods.watch("done");
+  console.log("methods.watch())", methods.watch());
+  const handleDeleteClick = async () => {
+    checks.forEach(async (id: any) => {
+      console.log("id", id);
+      await updateDoc(doc(firestore, "schedule", id), {
+        state: "DONE",
+      });
+    });
+  };
+
   return (
-    <>
+    <FormProvider {...methods}>
       <ModalCreateEvent
         startTime={startTime}
         setStartTime={setStartTime}
@@ -144,7 +171,6 @@ export default function Home() {
         isOpen={isOpenModalBilling}
         setIsOpen={setIsOpenModalBilling}
       />
-
       <div className="flex flex-col items-center gap-8 -mt-10">
         <Stopwatch
           onStart={onStartStopwatch}
@@ -152,6 +178,13 @@ export default function Home() {
           className="mb-auto"
         />
         <section className="relative container h-[600px] px-0">
+          <Button
+            className="mb-2"
+            size="sm"
+            onClick={() => handleDeleteClick()}
+          >
+            완료 처리
+          </Button>
           <div className="absolute top-[-48px] right-0 flex items-end gap-5">
             {!!totalSeconds && domLoaded && `이번달 총 시간: ${totalTime}`}
             <Button
@@ -162,7 +195,6 @@ export default function Home() {
               비용 청구
             </Button>
           </div>
-
           <div className={cn("h-full")}>
             <Calendar
               components={components}
@@ -177,6 +209,6 @@ export default function Home() {
           </div>
         </section>
       </div>
-    </>
+    </FormProvider>
   );
 }

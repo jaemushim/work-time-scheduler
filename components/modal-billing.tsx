@@ -55,10 +55,13 @@ Font.register({
 Font.registerHyphenationCallback((word) => ["", word, ""]);
 
 export const ModalBilling: FC<ModalBillingProps> = ({
-  schedules,
+  schedules:schedulesProp,
   isOpen,
   setIsOpen,
 }) => {
+  const schedules = schedulesProp?.filter(
+    (item: any) => item.state !== "DONE"
+  );
   const totalSeconds = schedules?.reduce((acc, cur: any) => {
     return acc + cur.time;
   }, 0);
