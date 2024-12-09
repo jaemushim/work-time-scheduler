@@ -55,13 +55,10 @@ Font.register({
 Font.registerHyphenationCallback((word) => ["", word, ""]);
 
 export const ModalBilling: FC<ModalBillingProps> = ({
-  schedules:schedulesProp,
+  schedules,
   isOpen,
   setIsOpen,
 }) => {
-  const schedules = schedulesProp?.filter(
-    (item: any) => item.state !== "DONE"
-  );
   const totalSeconds = schedules?.reduce((acc, cur: any) => {
     return acc + cur.time;
   }, 0);
@@ -73,6 +70,9 @@ export const ModalBilling: FC<ModalBillingProps> = ({
   const minutes = moment.duration(forMinuteSeconds, "milliseconds").asMinutes();
 
   const totalTime = `${Math.floor(hour / 8)}일 ${hour % 8}시간 ${minutes}분`;
+
+  const PER_HOUR_PRICE = 28410;
+  const price = ((hour + 1) * PER_HOUR_PRICE).toLocaleString("ko-KR");
 
   return (
     <>
@@ -148,7 +148,7 @@ export const ModalBilling: FC<ModalBillingProps> = ({
                           {totalTime}
                         </Text>
                         <Text style={{ width: "25%", textAlign: "center" }}>
-                          {moment(item.end).format("YYYY-MM-DD a HH:mm")}
+                          {moment(item.end).format("YYYY-MM-DD")}
                         </Text>
                       </View>
                       {item.img && (
@@ -186,10 +186,20 @@ export const ModalBilling: FC<ModalBillingProps> = ({
                   </Text>
                   <Text style={{ width: "25%", textAlign: "center" }}></Text>
                 </View>
+
+                <View style={{ marginTop: "24px" }}>
+                  <Text>
+                    프론트엔드 개발자 프리랜서 1달 단가 (일 8시간 주 5회 22일
+                    근무 기준) 500만원 으로 계산
+                  </Text>
+                  <Text style={{ marginTop: "12px" }}>합계: {price}원</Text>
+                  <Text style={{ marginTop: "12px" }}>
+                    계좌: 신한은행 110 368 702273 심재무
+                  </Text>
+                </View>
               </Page>
             </Document>
           </PDFViewer>
-          <Button onClick={() => {}}>다운로드</Button>
         </DialogContent>
       </Dialog>
     </>

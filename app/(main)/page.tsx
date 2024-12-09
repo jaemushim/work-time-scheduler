@@ -145,10 +145,8 @@ export default function Home() {
 
   const methods = useForm();
   const checks = methods.watch("done");
-  console.log("methods.watch())", methods.watch());
   const handleDeleteClick = async () => {
     checks.forEach(async (id: any) => {
-      console.log("id", id);
       await updateDoc(doc(firestore, "schedule", id), {
         state: "DONE",
       });
@@ -167,7 +165,7 @@ export default function Home() {
         time={time}
       />
       <ModalBilling
-        schedules={newSchedules as any}
+        schedules={notDoneNewSchedules as any}
         isOpen={isOpenModalBilling}
         setIsOpen={setIsOpenModalBilling}
       />
