@@ -33,8 +33,6 @@ interface ModalCreateEventProps {
   time: number;
   startTime: string;
   setStartTime: (date: string) => void;
-  endTime: string;
-  setEndTime: (date: string) => void;
 }
 
 const UploadStatus = ({
@@ -67,8 +65,6 @@ export const ModalCreateEvent: FC<ModalCreateEventProps> = ({
   setIsOpen,
   startTime,
   setStartTime,
-  endTime,
-  setEndTime,
 }) => {
   const auth = useAuth();
   const firestore = useFirestore();
@@ -78,19 +74,19 @@ export const ModalCreateEvent: FC<ModalCreateEventProps> = ({
   const [title, setTitle] = useState("");
   const resetFields = () => {
     setTitle("");
-    setStartTime(moment().format("yyyy-MM-DD HH:mm"));
-    setEndTime(moment().format("yyyy-MM-DD HH:mm"));
+    setStartTime(moment().format("yyyy-MM-DD"));
   };
-  const durationSeconds = moment
-    .duration(moment(endTime).diff(startTime))
-    .asMilliseconds();
+  const [hour, setHour] = useState("");
+  const [minutes, setMinutes] = useState("");
 
+  const durationSeconds =
+    Number(hour) * 60 * 60 * 1000 + Number(minutes) * 60 * 1000;
   const onSubmit = async () => {
     await addDoc(collection(firestore, "schedule"), {
       id: Date.now(),
       title,
       start: startTime,
-      end: endTime,
+      end: startTime,
       time: durationSeconds,
       img: imgURL,
     });
@@ -104,12 +100,6 @@ export const ModalCreateEvent: FC<ModalCreateEventProps> = ({
     const dt = ev.target["value"] + ":00Z";
     setTime(dt.toString().substring(0, 16));
   };
-
-  const totalHour = moment.utc(durationSeconds).format("HH");
-  const totalMinute = moment.utc(durationSeconds).add(1, "minute").format("mm");
-  const totalTime = `${Number(totalHour) ? `${Number(totalHour)}시간` : ""} ${
-    Number(totalMinute) ? `${Number(totalMinute)}분 ` : ""
-  }`;
 
   return (
     <>
@@ -132,30 +122,30 @@ export const ModalCreateEvent: FC<ModalCreateEventProps> = ({
                       value={startTime}
                       onChange={handleChange(setStartTime)}
                       name="startDate"
-                      type="datetime-local"
+                      type="date"
                       required
                       disabled={
                         !auth.currentUser?.email?.startsWith("shimwoan@")
                       }
                       className="border-none p-0"
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="startDate">종료 일</Label>
-                    <Input
-                      value={endTime}
-                      onChange={handleChange(setEndTime)}
-                      disabled={
-                        !auth.currentUser?.email?.startsWith("shimwoan@")
-                      }
-                      name="endDate"
-                      type="datetime-local"
-                      className="border-none p-0"
-                      required
                     />
                   </div>
                 </div>
-                <p className="mb-auto">총 시간: {totalTime}</p>
+
+                <div className="flex gap-2 my-2">
+                  <Input
+                    type="number"
+                    value={hour}
+                    onChange={(e) => setHour(e.target.value)}
+                    placeholder="시간"
+                  />
+                  <Input
+                    type="number"
+                    value={minutes}
+                    onChange={(e) => setMinutes(e.target.value)}
+                    placeholder="분"
+                  />
+                </div>
 
                 <Label htmlFor="title" className="mt-5">
                   제목

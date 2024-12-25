@@ -16,6 +16,7 @@ import momentDurationFormatSetup from "moment-duration-format";
 import "moment/locale/ko";
 import BgImg from "@/components/bg-img";
 import { FormProvider, useForm, useFormContext } from "react-hook-form";
+import { Check } from "lucide-react";
 
 momentDurationFormatSetup(moment as any);
 moment.locale("ko");
@@ -56,11 +57,7 @@ const ColoredDateCellWrapper = ({ children, event, ...rest }: any) => {
 export default function Home() {
   const [time, setTime] = useState(0);
   const [startTime, setStartTime] = useState(
-    moment(Date.now() - time).format("yyyy-MM-DD HH:mm")
-  );
-
-  const [endTime, setEndTime] = useState(
-    moment(Date.now()).format("yyyy-MM-DD HH:mm")
+    moment(Date.now() - time).format("yyyy-MM-DD")
   );
 
   const { components, messages, defaultDate, views } = useMemo(
@@ -86,8 +83,7 @@ export default function Home() {
   );
 
   const [isOpenModalCreateEvent, setIsOpenModalCreateEvent] = useState(false);
-  const onSaveTime = (time: number) => {
-    setEndTime(moment().format("yyyy-MM-DD HH:mm"));
+  const onSaveTime = () => {
     setTime(time);
     setIsOpenModalCreateEvent(true);
   };
@@ -158,8 +154,6 @@ export default function Home() {
       <ModalCreateEvent
         startTime={startTime}
         setStartTime={setStartTime}
-        endTime={endTime}
-        setEndTime={setEndTime}
         isOpen={isOpenModalCreateEvent}
         setIsOpen={setIsOpenModalCreateEvent}
         time={time}
@@ -170,11 +164,9 @@ export default function Home() {
         setIsOpen={setIsOpenModalBilling}
       />
       <div className="flex flex-col items-center gap-8 -mt-10">
-        <Stopwatch
-          onStart={onStartStopwatch}
-          onSave={onSaveTime}
-          className="mb-auto"
-        />
+        <Button variant="ghost" size="sm" onClick={() => onSaveTime()}>
+          <Check className="text-green-500" />
+        </Button>
         <section className="relative container h-[600px] px-0">
           <Button
             className="mb-2"
