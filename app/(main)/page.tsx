@@ -4,9 +4,15 @@ import { Calendar, Views, momentLocalizer } from "react-big-calendar";
 import Stopwatch from "@/components/ui/stopwatch";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import "@/lib/react-big-calendar.css";
-import { ModalCreateEvent } from "@/components/modal-create-event";
 import { useAuth, useFirestore, useFirestoreCollectionData } from "reactfire";
-import { collection, doc, orderBy, query, updateDoc } from "firebase/firestore";
+import {
+  collection,
+  addDoc,
+  doc,
+  orderBy,
+  query,
+  updateDoc,
+} from "firebase/firestore";
 import { cn } from "@/lib/utils";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
@@ -17,9 +23,22 @@ import "moment/locale/ko";
 import BgImg from "@/components/bg-img";
 import { FormProvider, useForm, useFormContext } from "react-hook-form";
 import { Check } from "lucide-react";
+import { getMockSenderEnhancer } from "@rpldy/mock-sender";
+import { Label } from "@/components/ui/label";
+import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
+import Uploady, {
+  useItemStartListener,
+  useItemFinalizeListener,
+} from "@rpldy/uploady";
+import { Input } from "@/components/ui/input";
+import { toast } from "@/components/ui/use-toast";
+import UploadPreview from "@rpldy/upload-preview";
+import withPasteUpload from "@rpldy/upload-paste";
+const mockSenderEnhancer = getMockSenderEnhancer();
 
 momentDurationFormatSetup(moment as any);
 moment.locale("ko");
+const PasteInput = withPasteUpload(Input);
 
 const localizer = momentLocalizer(moment);
 const ColoredDateCellWrapper = ({ children, event, ...rest }: any) => {
@@ -149,15 +168,135 @@ export default function Home() {
     });
   };
 
+  const UploadStatus = ({
+    setImgURL,
+    setImgUploadLoading,
+  }: {
+    setImgURL: (url: string) => void;
+    setImgUploadLoading: (bool: boolean) => void;
+  }) => {
+    const [status, setStatus] = useState<null | string>(null);
+    const storage = getStorage();
+    const fileName = new Date().toJSON();
+    const storageRef = ref(storage, fileName);
+
+    useItemStartListener(() => {});
+    useItemFinalizeListener((e) => {
+      setImgUploadLoading(true);
+      uploadBytes(storageRef, e.file as File).then(async (snapshot) => {
+        const url = await getDownloadURL(snapshot.ref);
+        setImgURL(url);
+      });
+      setImgUploadLoading(false);
+    });
+
+    return status;
+  };
+
+  const [imgUploadLoading, setImgUploadLoading] = useState(false);
+  const [imgURL, setImgURL] = useState("");
+  const [hourValue, setHourValue] = useState("");
+  const [minutesValue, setMinutesValue] = useState("");
+  const [title, setTitle] = useState("");
+
+  const durationSeconds =
+    Number(hour) * 60 * 60 * 1000 + Number(minutes) * 60 * 1000;
+  const onSubmit = async () => {
+    await addDoc(collection(firestore, "schedule"), {
+      id: Date.now(),
+      title,
+      start: startTime,
+      end: startTime,
+      time: durationSeconds,
+      img: imgURL,
+    });
+    toast({ title: "성공적으로 저장되었습니다." });
+  };
+
+  const handleChange = (setTime: (date: string) => void) => (ev: any) => {
+    if (!ev.target["validity"].valid) return;
+    const dt = ev.target["value"];
+    setTime(dt);
+  };
+
   return (
     <FormProvider {...methods}>
-      <ModalCreateEvent
-        startTime={startTime}
-        setStartTime={setStartTime}
-        isOpen={isOpenModalCreateEvent}
-        setIsOpen={setIsOpenModalCreateEvent}
-        time={time}
-      />
+      <Uploady debug enhancer={mockSenderEnhancer}>
+        <div className="w-[400px] mx-auto">
+          <div className="flex items-center gap-3 mb-3">
+            <div>
+              <Label htmlFor="startDate">시작 일</Label>
+              <Input
+                value={startTime}
+                onChange={handleChange(setStartTime)}
+                name="startDate"
+                type="date"
+                required
+                disabled={!auth.currentUser?.email?.startsWith("shimwoan@")}
+                className="border-none p-0"
+              />
+            </div>
+          </div>
+
+          <div className="flex gap-2 my-2">
+            <Input
+              type="number"
+              value={hour}
+              onChange={(e) => setHourValue(e.target.value)}
+              placeholder="시간"
+            />
+            <Input
+              type="number"
+              value={minutes}
+              onChange={(e) => setMinutesValue(e.target.value)}
+              placeholder="분"
+            />
+          </div>
+
+          <Label htmlFor="title" className="mt-5">
+            제목
+          </Label>
+          <Input
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            name="title"
+            placeholder="제목을 입력하세요."
+            type="text"
+            onKeyDown={(e: React.KeyboardEvent) => {
+              if (e.key === "Enter") {
+                onSubmit();
+              }
+            }}
+            required
+          />
+
+          <Label htmlFor="img" className="mt-5">
+            이미지
+          </Label>
+          <PasteInput
+            extraProps={{
+              name: "img",
+              placeholder: "파일을 업로드하세요. (붙여넣기)",
+            }}
+          />
+          <UploadStatus
+            setImgURL={setImgURL}
+            setImgUploadLoading={setImgUploadLoading}
+          />
+          <div>
+            <UploadPreview />
+          </div>
+        </div>
+
+        <Button
+          disabled={imgUploadLoading}
+          onClick={() => onSubmit()}
+          className="mt-8"
+        >
+          등록
+        </Button>
+      </Uploady>
+
       <ModalBilling
         schedules={notDoneNewSchedules as any}
         isOpen={isOpenModalBilling}
