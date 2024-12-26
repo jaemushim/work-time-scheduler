@@ -149,8 +149,8 @@ export default function Home() {
   const forMinuteSeconds =
     totalSeconds - moment.duration(hour, "hours").asMilliseconds();
   const minutes = moment.duration(forMinuteSeconds, "milliseconds").asMinutes();
-
   const totalTime = `${Math.floor(hour / 8)}일 ${hour % 8}시간 ${minutes}분`;
+
   const [domLoaded, setDomLoaded] = useState(false);
   useEffect(() => {
     setDomLoaded(true);
@@ -200,7 +200,7 @@ export default function Home() {
   const [title, setTitle] = useState("");
 
   const durationSeconds =
-    Number(hour) * 60 * 60 * 1000 + Number(minutes) * 60 * 1000;
+    Number(hourValue) * 60 * 60 * 1000 + Number(minutesValue) * 60 * 1000;
   const onSubmit = async () => {
     await addDoc(collection(firestore, "schedule"), {
       id: Date.now(),
@@ -222,7 +222,7 @@ export default function Home() {
   return (
     <FormProvider {...methods}>
       <Uploady debug enhancer={mockSenderEnhancer}>
-        <div className="w-[400px] mx-auto">
+        <div className="w-[600px] mx-auto">
           <div className="flex items-center gap-3 mb-3">
             <div>
               <Label htmlFor="startDate">시작 일</Label>
@@ -241,13 +241,13 @@ export default function Home() {
           <div className="flex gap-2 my-2">
             <Input
               type="number"
-              value={hour}
+              value={hourValue}
               onChange={(e) => setHourValue(e.target.value)}
               placeholder="시간"
             />
             <Input
               type="number"
-              value={minutes}
+              value={minutesValue}
               onChange={(e) => setMinutesValue(e.target.value)}
               placeholder="분"
             />
@@ -286,15 +286,15 @@ export default function Home() {
           <div>
             <UploadPreview />
           </div>
-        </div>
 
-        <Button
-          disabled={imgUploadLoading}
-          onClick={() => onSubmit()}
-          className="mt-8"
-        >
-          등록
-        </Button>
+          <Button
+            disabled={imgUploadLoading}
+            onClick={() => onSubmit()}
+            className="w-full mt-3"
+          >
+            등록
+          </Button>
+        </div>
       </Uploady>
 
       <ModalBilling
@@ -302,10 +302,7 @@ export default function Home() {
         isOpen={isOpenModalBilling}
         setIsOpen={setIsOpenModalBilling}
       />
-      <div className="flex flex-col items-center gap-8 -mt-10">
-        <Button variant="ghost" size="sm" onClick={() => onSaveTime()}>
-          <Check className="text-green-500" />
-        </Button>
+      <div className="flex flex-col items-center gap-4">
         <section className="relative container h-[600px] px-0">
           <Button
             className="mb-2"
