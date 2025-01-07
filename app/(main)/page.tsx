@@ -44,7 +44,7 @@ const localizer = momentLocalizer(moment);
 const ColoredDateCellWrapper = ({ children, event, ...rest }: any) => {
   const { register } = useFormContext();
   const totalHour = moment.utc(event.time).format("HH");
-  const totalMinute = moment.utc(event.time).add(1, "minute").format("mm");
+  const totalMinute = moment.utc(event.time).format("mm");
   const totalTime = `${Number(totalHour) ? `${Number(totalHour)}시간` : ""} ${
     Number(totalMinute) ? `${Number(totalMinute)}분 ` : ""
   }`;

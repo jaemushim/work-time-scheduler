@@ -1,7 +1,5 @@
 import { FC } from "react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
-import { toast } from "@/components/ui/use-toast";
-import { Button } from "@/components/ui/button";
 import {
   Page,
   Text,
@@ -122,16 +120,13 @@ export const ModalBilling: FC<ModalBillingProps> = ({
 
                 {schedules?.map((item) => {
                   const totalHour = moment.utc(item.time).format("HH");
-                  const totalMinute = moment
-                    .utc(item.time)
-                    .add(1, "minute")
-                    .format("mm");
+                  const totalMinute = moment.utc(item.time).format("mm");
                   const totalTime = `${
                     Number(totalHour) ? `${Number(totalHour)}시간` : ""
                   } ${Number(totalMinute) ? `${Number(totalMinute)}분 ` : ""}`;
 
                   return (
-                    <View key={item.id}>
+                    <View wrap={false} key={item.id}>
                       <View
                         style={{
                           display: "flex",
